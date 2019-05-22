@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import src.tools.*;
 
 public class Serveur implements Runnable {
     private int port;
@@ -33,7 +34,8 @@ public class Serveur implements Runnable {
     }
     public void run(){
         while(true){
-            this.recevoir();
+            Socket sock = this.recevoir();
+            new Thread(Communication(sock)).start();
         }
     }
 
