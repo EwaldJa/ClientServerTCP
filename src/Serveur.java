@@ -7,6 +7,9 @@ import java.net.Socket;
 import src.tools.*;
 
 public class Serveur implements Runnable {
+
+    public static final int MAX_REQUEST_NUMBER = 100;
+
     private int port;
     private ServerSocket servSocket;
 

@@ -4,15 +4,28 @@ import java.io.*;
 
 public class GestionHttp {
 
-    public static int sendFile(PrintWriter pw, String filename){
+    private String http_version = "HTTP/1.1 ";
+    private String connection = "Connection: ";
+    private String keep_alive = "Keep-Alive: ";
+
+    public static int sendFile(PrintWriter pw, String filename, int request_number){
+        String s;
         try{
-            byte[] buff = {};
+            byte[] buff = new byte[512];
             File file = new File(filename);
             FileInputStream fo = new FileInputStream(file);
-            fo.read(buff);
-            String s = new String(buff, "UTF-8");
-            pw.println(s);
-            pw.flush();
+            int size = fo.read(buff);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            try {
+                baos.write(buff);
+                while (size == 512) {
+                    size = fo.read(buff);
+                    baos.write(buff);
+                }
+            } catch (IOException e) {
+                //TODO deal with the exception
+            }
+            s = new String(baos.toByteArray(), "UTF-8");
         }
         catch(FileNotFoundException e) {
             e.printStackTrace();
@@ -23,6 +36,9 @@ public class GestionHttp {
             e.printStackTrace();
             return 1;
         }
+        //TODO create the header
+        pw.println(s);
+        pw.flush();
         return 0;
     }
     public static int receiveFile(BufferedReader buff, String filename){
@@ -42,18 +58,6 @@ public class GestionHttp {
         }
         return 0;
 
-    }
-
-    public static void generateHeader() {
-        String http = "HTTP/1.1 200 OK\r\n";
-        String date = "Date: \r\n";
-        String contentType = "Content-Type: \r\n";
-        String contentLength = "Content-Length \r\n";
-        String lastModified = "Last-Modified \r\n";
-        String server = "Server: \r\n";
-        String etag = "ETag: \r\n";
-        String acceptRange = "Accept-Ranges: none\r\n";
-        String connection = " \r\n";
     }
 
 }

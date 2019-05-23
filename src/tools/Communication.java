@@ -13,8 +13,10 @@ public class Communication implements Runnable {
 	private Logger mylogger;
 	private BufferedReader in;
 	private PrintWriter out;
+	private int request_number;
 
 	public Communication(Socket socket) {
+	    request_number = src.Serveur.MAX_REQUEST_NUMBER;
 		clt_socket = socket;
 		hist_requetes_clt = new ArrayList<String>();
 		mylogger = new Logger("defaultconfigCommunication.txt", "Communication port" + clt_socket.getLocalPort());
@@ -41,7 +43,7 @@ public class Communication implements Runnable {
 			}
 			switch (request) {
 				case "GET":
-					GestionHttp.sendFile(out, filename);
+					GestionHttp.sendFile(out, filename, request_number);
 					break;
 				case "PUT":
 					GestionHttp.receiveFile(in, filename);
