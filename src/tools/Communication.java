@@ -41,13 +41,14 @@ public class Communication implements Runnable {
 			}
 			switch (request) {
 				case "GET":
-					//TODO call sendfile method
+					GestionHttp.sendFile(out, filename);
 					break;
 				case "PUT":
-					//TODO call receivefile method
+					GestionHttp.receiveFile(in, filename);
 					break;
 				default:
-					break;			}
+					break;
+			}
 		} catch (IOException e) {
 			//TODO deal with the exception
 		} catch (NullPointerException e) {
