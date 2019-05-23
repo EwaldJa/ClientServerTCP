@@ -22,34 +22,38 @@ public class Communication implements Runnable {
 
 	
 	private boolean recevoir() {
-		byte[] buffer = new byte[8192];
-		DatagramPacket rec_dp = new DatagramPacket(buffer, 8192);
 		try {
-			ds_com.receive(rec_dp);
+			String line = in.readLine();
+			String request = "";
+			int i = 0;
+			while(line.charAt(i) != ' ') {
+				request+=line.charAt(i);
+				i++;
+			}
+			i+=2;
+			String filename = "";
+			while(line.charAt(i) != ' ') {
+				filename+=line.charAt(i);
+				i++;
+			}
+			if (filename == "") {
+				filename = "index.html";
+			}
+			switch (request) {
+				case "GET":
+					//TODO call sendfile method
+					break;
+				case "PUT":
+					//TODO call receivefile method
+					break;
+				default:
+					break;			}
 		} catch (IOException e) {
-			mylogger.log(Logger.OFF, "Erreur lors de la réception d'un message client");
-			mylogger.log(Logger.IMPORTANT, e.getMessage());
-			//System.err.println("Erreur lors de la réception d'un message client : ");
-			//e.printStackTrace();
+			//TODO deal with the exception
+		} catch (NullPointerException e) {
+			//TODO deal with the exception
 		}
-		String rec_msg = "";
-		try {
-			rec_msg = new String (rec_dp.getData(), "utf-8");
-			hist_requetes_clt.add(rec_msg);
-			mylogger.log(Logger.DEBUG, "Message reçu :" + rec_msg);
-		} catch (UnsupportedEncodingException e) {
-			mylogger.log(Logger.OFF, "Erreur lors du décodage d'un message client");
-			mylogger.log(Logger.IMPORTANT, e.getMessage());
-			//System.err.println("Erreur lors du d�codage d'un message client : ");
-			//e.printStackTrace();
-		}
-		if (rec_msg == "DE") {
-			return false;
-		}
-		else {
-			System.out.println("Message client : " + rec_msg);
-			return true;
-		}
+		return false;
 	}
 	
 	private void envoyer () {
