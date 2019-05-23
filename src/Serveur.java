@@ -20,8 +20,7 @@ public class Serveur implements Runnable {
         this.port = port;
     }
 
-    public Socket recevoir(){
-        String message = new String();
+    public Socket recevoirConnection(){
         Socket servConnect = null;
 
         try {
@@ -34,8 +33,8 @@ public class Serveur implements Runnable {
     }
     public void run(){
         while(true){
-            Socket sock = this.recevoir();
-            new Thread(Communication(sock)).start();
+            new Thread(new Communication(this.recevoir())).start();
+            System.out.println("La connection a été établie");
         }
     }
 
