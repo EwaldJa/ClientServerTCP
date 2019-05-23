@@ -44,4 +44,16 @@ public class GestionHttp {
 
     }
 
+    public static void generateHeader() {
+        String http = "HTTP/1.1 200 OK\r\n";
+        String date = "Date: \r\n";
+        String contentType = "Content-Type: \r\n";
+        String contentLength = "Content-Length \r\n";
+        String lastModified = "Last-Modified \r\n";
+        String server = "Server: \r\n";
+        String etag = "ETag: \r\n";
+        String acceptRange = "Accept-Ranges: none\r\n";
+        String connection = " \r\n";
+    }
+
 }
