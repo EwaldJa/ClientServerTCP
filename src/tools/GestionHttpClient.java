@@ -13,16 +13,6 @@ public class GestionHttpClient extends GestionHttp {
     }
 
     public static int writeFile(BufferedReader buff, String filename) {
-        boolean headerskipped = false;
-        String line;
-        while (!headerskipped) {
-            try {
-                line = buff.readLine();
-                headerskipped = (line == "");
-            } catch (IOException e) {
-                //TODO HANDLE THE EXCEPTION
-            }
-        }
         return GestionHttp.writeFile(buff, filename);
     }
 }
