@@ -81,7 +81,7 @@ public class ViewControler {
 
     private void setupButtonEnvoyer(){
         buttonEnvoyer.setOnAction(event ->{
-           /* if (testReadyE()) {
+            if (testReadyE()) {
                 retourFonction = LocalClient.SendFile(IP, port, fichier);
                 if (retourFonction != LocalClient.transfer_successful) {
                     newPopUp(erreurTitre, getErrorText(retourFonction), PopUpType.ERROR);
@@ -89,13 +89,13 @@ public class ViewControler {
                 }
                 else
                     newPopUp(succesTitre,succesTexte, PopUpType.INFO);
-            }*/
+            }
         });
     }
 
     private void setupButtonTelecharger(){
         buttonTelecharger.setOnAction(event ->{
-           /* if (testReadyR()) {
+            if (testReadyR()) {
                 retourFonction = LocalClient.ReceiveFile(IP, port, TFnomFichier.getText());
                 if (retourFonction != LocalClient.transfer_successful) {
                     newPopUp(erreurTitre, getErrorText(retourFonction), PopUpType.ERROR);
@@ -103,7 +103,7 @@ public class ViewControler {
                 }
                 else
                     newPopUp(succesTitre,succesTexte, PopUpType.INFO);
-            }*/
+            }
         });
     }
 
@@ -184,7 +184,7 @@ public class ViewControler {
             case LocalClient.error_client_undefined: return "Erreur locale : Inconnue";
             case LocalClient.error_client_file_not_found: return "Erreur locale : Fichier introuvable";
             case LocalClient.error_client_access_violation: return "Erreur locale : Accès interdit au fichier";
-            case LocalClient.error_client_disk_full: return "Erreur locale : Disque client plein";
+            case LocalClient.error_client_disk_full: return "Erreur locale : Disque LocalClient plein";
             case LocalClient.error_client_illegal_tftp_operation: return "Erreur locale : Opération TFTP non autorisée";*/
         }
         return "Erreur inconnue";
