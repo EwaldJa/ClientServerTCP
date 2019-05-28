@@ -22,40 +22,45 @@ public class Communication implements Runnable {
         int requestreturn = 0;
 		try {
 			String line = in.readLine();
-			System.out.println(line);
 
             String[] head = line.split(" ");
-			System.out.println(head.length);
 			String request = head[0];
 			String filename = head[1];
 			String httpVersion = head[2];
 
-			mylogger.log(Logger.DEBUG, "Requête reçue : " + line + " , requete" + request +", fichier" + filename + ", http" + httpVersion);
+			mylogger.log(Logger.DEBUG, "Requête reçue : " + line + " , requete " + request +", fichier " + filename + ", http " + httpVersion);
 
-			if (!httpVersion.toLowerCase().equals("http/1.1")) {
+			if (!httpVersion.equals("HTTP/1.1")) {
 			    sendError(505);
-				System.out.println("ERREUR 505");
-			    in.reset();
 			    return true;
             }
 
 			boolean headerskipped = false;
 			while (!headerskipped) {
 				line = in.readLine();
+				if (line.equals("")) {
+					headerskipped = true;
+					break;
+				}
 				String[] field = line.split(" ");
 				mylogger.log(Logger.DEBUG, "field complet : " + line + " , champ : " + field[0]);
 				mylogger.log(Logger.DEBUG, "valeur : " + field[1]);
 				if (field[0].equals("Connection:")) {
 					closeConnection = (field[1].toLowerCase().equals("close"));
 				}
-				headerskipped = (line.equals(""));
+				mylogger.log(Logger.DEBUG, "headerskipped:"+headerskipped);
 			}
+			mylogger.log(Logger.DEBUG, "Header passé");
 			switch (request) {
 				case "GET":
+					mylogger.log(Logger.DEBUG, "Appel à GET");
 					requestreturn = GestionHttpServer.sendFile(out, filename);
+					mylogger.log(Logger.DEBUG, "GET réalisé, retour : " + requestreturn);
 					break;
 				case "PUT":
+					mylogger.log(Logger.DEBUG, "Appel à PUT");
                     requestreturn = GestionHttpServer.writeFile(in, filename);
+					mylogger.log(Logger.DEBUG, "PUT réalisé, retour : " + requestreturn);
 					break;
 				default:
                     requestreturn = 400;

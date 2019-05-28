@@ -8,7 +8,7 @@ public class GestionHttpClient extends GestionHttp {
 
     public static int sendFile(PrintWriter pw, String filename) {
         //TODO créer le header
-        String header = "PUT " + filename + " HTTP/1.1\r\n\r\n";
+        String header = "PUT " + filename + " HTTP/1.1\r\n";
         return GestionHttp.sendFile(pw, filename, header);
     }
 

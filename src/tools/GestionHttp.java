@@ -10,22 +10,25 @@ public class GestionHttp {
     protected static int sendFile(PrintWriter pw, String filename, String header){
         String payload;
         try{
+            int totallength = 0;
             byte[] buff = new byte[512];
             File file = new File(filename);
             FileInputStream fo = new FileInputStream(file);
             int size = fo.read(buff);
+            totallength+=size;
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             try {
                 baos.write(buff);
                 while (size == 512) {
                     size = fo.read(buff);
+                    totallength+=size;
                     baos.write(buff);
                 }
             } catch (IOException e) {
                 //TODO deal with the exception
             }
             payload = new String(baos.toByteArray(), StandardCharsets.US_ASCII);
-            String contentLength = content_length_tag + payload.length() + "\r\n";
+            String contentLength = content_length_tag + totallength + "\r\n\r\n";
             String totalRequest = header + contentLength + payload;
             pw.print(totalRequest);
             pw.flush();
