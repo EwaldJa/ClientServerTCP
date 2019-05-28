@@ -15,13 +15,23 @@ public class LocalClient {
             Socket socket = new Socket(ServeurAdresse, Integer.parseInt(server_port_str));
             BufferedReader buffSocket=new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-            //TODO send get
+            //send get
+            String header = "GET " + filepath + " HTTP/1.1+\r\nHost: "+server_address_str+"+\r\n\r\n";
+            PrintWriter outSocket = new PrintWriter(socket.getOutputStream());
+            outSocket.print(header);
+            outSocket.flush();
 
 
+            String reponse=buffSocket.readLine();
+            if(reponse.split(" ")[1]!="200"){
+                return -1;
+            }
 
-            //TODO read response
-
+            while(buffSocket.readLine()!="");
             GestionHttpClient.writeFile(buffSocket,filepath);
+
+
+
 
         } catch (UnknownHostException e) {
             e.printStackTrace();
