@@ -33,12 +33,9 @@ public class GestionHttp {
         }
         catch(FileNotFoundException e) {
             return 404;
-
         }
-
         catch (IOException e) {
-            //TODO deal with the exception
-            return 1;
+            return 500;
         }
     }
     protected static int writeFile(BufferedReader buff, String filename){
@@ -51,11 +48,9 @@ public class GestionHttp {
                 fo.write(s.getBytes());
             }
         }catch(FileNotFoundException e){
-            e.printStackTrace();
-            return 2;
+            return 404;
         }catch(IOException e){
-            e.printStackTrace();
-            return 1;
+            return 500;
         }
         return 0;
 

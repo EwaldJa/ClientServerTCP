@@ -13,6 +13,7 @@ public class GestionHttpServer extends GestionHttp {
     }
 
     public static int writeFile(BufferedReader buff, String filename) {
-        return GestionHttp.writeFile(buff, filename);
+        String filepath = "server/" + filename;
+        return GestionHttp.writeFile(buff, filepath);
     }
 }

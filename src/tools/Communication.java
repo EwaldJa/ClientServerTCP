@@ -19,23 +19,18 @@ public class Communication implements Runnable {
 	
 	private boolean recevoir() {
 		boolean closeConnection = false;
+        int requestreturn = 0;
 		try {
 			String line = in.readLine();
-			String request = "";
-			int i = 0;
-			while(line.charAt(i) != ' ') {
-				request+=line.charAt(i);
-				i++;
-			}
-			i++;
-			String filename = "";
-			while(line.charAt(i) != ' ') {
-				filename+=line.charAt(i);
-				i++;
-			}
-			if (filename == "") {
-				filename = "index.html";
-			}
+            String[] head = line.split(" ");
+			String request = head[0];
+			String filename = head[1];
+			String httpVersion = head[2];
+
+			if (!httpVersion.toLowerCase().equals("HTTP/1.1")) {
+			    sendError(505);
+			    return true;
+            }
 
 			String[] field;
 			boolean headerskipped = false;
@@ -47,29 +42,58 @@ public class Communication implements Runnable {
 				}
 				headerskipped = (line.equals(""));
 			}
-
 			switch (request) {
 				case "GET":
-					GestionHttpServer.sendFile(out, filename);
+					requestreturn = GestionHttpServer.sendFile(out, filename);
 					break;
 				case "PUT":
-                    GestionHttpServer.writeFile(in, filename);
+                    requestreturn = GestionHttpServer.writeFile(in, filename);
 					break;
 				default:
-					break;
+                    requestreturn = 400;
+                    break;
 			}
+
 		} catch (IOException e) {
 			mylogger.log(Logger.OFF, "Erreur lors de la réception");
 			mylogger.log(Logger.IMPORTANT, e.getMessage());
+			requestreturn = 500;
 		} catch (NullPointerException e) {
 			mylogger.log(Logger.INFO, "Erreur NullPointer à la réception");
 			mylogger.log(Logger.DEBUG, e.getMessage());
+			requestreturn = 500;
 		}
+        if (requestreturn != 0) {
+            sendError(requestreturn);
+            closeConnection = true;
+        }
 		return closeConnection;
 	}
 	
-	private void envoyer () {
-
+	private void sendError(int error_code) {
+	    String error_name = "";
+	    switch (error_code) {
+            case 400:
+                error_name = "Bad Request";
+                break;
+            case 404:
+                error_name = "Not Found";
+                break;
+            case 500:
+                error_name = "Internal Server Error";
+                break;
+            case 505:
+                error_name = "HTTP Version not supported";
+                break;
+            default:
+                error_code = 500;
+                error_name = "Internal Server Error";
+                break;
+        }
+        String request = "HTTP/1.1 " + error_code + error_name + "\r\n";
+	    String connection = "Connection: close\r\n";
+	    out.write(request + connection);
+	    out.flush();
 	}
 
 	@Override
