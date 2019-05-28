@@ -75,12 +75,13 @@ public class Communication implements Runnable {
 			mylogger.log(Logger.INFO, "Erreur NullPointer à la réception");
 			mylogger.log(Logger.DEBUG, e.getMessage());
 			requestreturn = 500;
-		}
-        if (requestreturn != 0) {
-            sendError(requestreturn);
-            closeConnection = true;
+		} finally {
+            if (requestreturn != 0) {
+                sendError(requestreturn);
+                closeConnection = true;
+            }
+            return closeConnection;
         }
-		return closeConnection;
 	}
 	
 	private void sendError(int error_code) {
@@ -125,7 +126,7 @@ public class Communication implements Runnable {
 			mylogger.log(Logger.IMPORTANT, e.getMessage());
 		}
 
-		while (recevoir()) {/*Reçoit et répond au client*/}
+		while (!recevoir()) {/*Reçoit et répond au client*/}
 		try {
 			in.close();
 		} catch (IOException e) {
