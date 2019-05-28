@@ -16,7 +16,7 @@ public class LocalClient {
             BufferedReader buffSocket=new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
             //send get
-            String header = "GET " + filepath + " HTTP/1.1+\r\nHost: "+server_address_str+"+\r\n\r\n";
+            String header = "GET " + filepath + " HTTP/1.1\r\nHost: "+server_address_str+"+\r\n\r\n";
             PrintWriter outSocket = new PrintWriter(socket.getOutputStream());
             outSocket.print(header);
             outSocket.flush();
@@ -30,7 +30,7 @@ public class LocalClient {
             while(!buffSocket.readLine().equals(""));
             GestionHttpClient.writeFile(buffSocket,filepath);
 
-            header = "HTTP/1.1+\r\nConnection: close\r\n\r\n";
+            header = "HTTP/1.1\r\nConnection: close\r\n\r\n";
             outSocket.print(header);
             outSocket.flush();
 
@@ -51,7 +51,7 @@ public class LocalClient {
             Socket socket = new Socket(ServeurAdresse, Integer.parseInt(server_port_str));
 
             //send get
-            String header = "HTTP/1.1+\r\nConnection: close\r\n\r\n";
+            String header = "HTTP/1.1\r\nConnection: close\r\n\r\n";
             PrintWriter outSocket = new PrintWriter(socket.getOutputStream());
             outSocket.print(header);
             outSocket.flush();

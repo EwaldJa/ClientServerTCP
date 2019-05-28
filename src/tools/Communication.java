@@ -22,13 +22,18 @@ public class Communication implements Runnable {
         int requestreturn = 0;
 		try {
 			String line = in.readLine();
+			System.out.println(line);
+
             String[] head = line.split(" ");
+			System.out.println(head.length);
 			String request = head[0];
 			String filename = head[1];
 			String httpVersion = head[2];
 
-			if (!httpVersion.toLowerCase().equals("HTTP/1.1")) {
+			if (!httpVersion.toLowerCase().equals("http/1.1")) {
 			    sendError(505);
+				System.out.println("ERREUR 505");
+			    in.reset();
 			    return true;
             }
 
@@ -36,6 +41,7 @@ public class Communication implements Runnable {
 			boolean headerskipped = false;
 			while (!headerskipped) {
 				line = in.readLine();
+				System.out.println("HEADER : "+line);
 				field = line.split(" ");
 				if (field[0].equals("Connection:")) {
 					closeConnection = (field[1].toLowerCase().equals("close"));
