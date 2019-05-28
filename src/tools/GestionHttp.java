@@ -1,6 +1,7 @@
 package src.tools;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 public class GestionHttp {
 
@@ -23,7 +24,7 @@ public class GestionHttp {
             } catch (IOException e) {
                 //TODO deal with the exception
             }
-            payload = new String(baos.toByteArray(), "UTF-8");
+            payload = new String(baos.toByteArray(), StandardCharsets.US_ASCII);
             String contentLength = content_length_tag + payload.length() + "\r\n";
             String totalRequest = header + contentLength + payload;
             pw.print(totalRequest);
@@ -46,6 +47,7 @@ public class GestionHttp {
             File file = new File(filename);
             FileOutputStream fo = new FileOutputStream(file);
             while((s = buff.readLine())!=null) {
+                s+="\n";
                 fo.write(s.getBytes());
             }
         }catch(FileNotFoundException e){

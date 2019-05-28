@@ -8,9 +8,7 @@ import src.tools.*;
 
 public class Serveur implements Runnable {
 
-    public static final int MAX_REQUEST_NUMBER = 100;
 
-    private int port;
     private ServerSocket servSocket;
 
     public Serveur(int port, int backlog){
@@ -20,10 +18,9 @@ public class Serveur implements Runnable {
             e.printStackTrace();
             System.out.println("Le port est inaccessible");
         }
-        this.port = port;
     }
 
-    public Socket recevoirConnection(){
+    private Socket recevoirConnection(){
         Socket servConnect = null;
 
         try {

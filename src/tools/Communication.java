@@ -3,26 +3,22 @@ package src.tools;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.ArrayList;
 
 public class Communication implements Runnable {
 	
 	private Socket clt_socket;
-	private ArrayList<String> hist_requetes_clt;
 	private Logger mylogger;
 	private BufferedReader in;
 	private PrintWriter out;
-	private int request_number;
 
 	public Communication(Socket socket) {
-	    request_number = src.Serveur.MAX_REQUEST_NUMBER;
 		clt_socket = socket;
-		hist_requetes_clt = new ArrayList<String>();
 		mylogger = new Logger("defaultconfigCommunication.txt", "Communication port" + clt_socket.getLocalPort());
 	}
 
 	
 	private boolean recevoir() {
+		boolean closeConnection = false;
 		try {
 			String line = in.readLine();
 			String request = "";
@@ -31,7 +27,7 @@ public class Communication implements Runnable {
 				request+=line.charAt(i);
 				i++;
 			}
-			i+=2;
+			i++;
 			String filename = "";
 			while(line.charAt(i) != ' ') {
 				filename+=line.charAt(i);
@@ -40,6 +36,18 @@ public class Communication implements Runnable {
 			if (filename == "") {
 				filename = "index.html";
 			}
+
+			String[] field;
+			boolean headerskipped = false;
+			while (!headerskipped) {
+				line = in.readLine();
+				field = line.split(" ");
+				if (field[0].equals("Connection:")) {
+					closeConnection = (field[1].toLowerCase().equals("close"));
+				}
+				headerskipped = (line.equals(""));
+			}
+
 			switch (request) {
 				case "GET":
 					GestionHttpServer.sendFile(out, filename);
@@ -51,11 +59,13 @@ public class Communication implements Runnable {
 					break;
 			}
 		} catch (IOException e) {
-			//TODO deal with the exception
+			mylogger.log(Logger.OFF, "Erreur lors de la réception");
+			mylogger.log(Logger.IMPORTANT, e.getMessage());
 		} catch (NullPointerException e) {
-			//TODO deal with the exception
+			mylogger.log(Logger.INFO, "Erreur NullPointer à la réception");
+			mylogger.log(Logger.DEBUG, e.getMessage());
 		}
-		return false;
+		return closeConnection;
 	}
 	
 	private void envoyer () {
@@ -77,10 +87,14 @@ public class Communication implements Runnable {
 			mylogger.log(Logger.IMPORTANT, e.getMessage());
 		}
 
-		
-		while (recevoir()) {
-			envoyer();
+		while (recevoir()) {/*Reçoit et répond au client*/}
+		try {
+			in.close();
+		} catch (IOException e) {
+			mylogger.log(Logger.OFF, "Erreur à la fermeture du BufferedReader de la réception");
+			mylogger.log(Logger.IMPORTANT, e.getMessage());
 		}
+		out.close();
 	}
 	
 	public void finalize() throws Throwable{
