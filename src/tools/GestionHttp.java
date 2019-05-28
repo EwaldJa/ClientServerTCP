@@ -46,15 +46,24 @@ public class GestionHttp {
             String s = "";
             File file = new File(filename);
             FileOutputStream fo = new FileOutputStream(file);
-            while((s = buff.readLine())!=null) {
-                s+="\n";
+
+            while((s = buff.readLine()).isEmpty()) {
+                System.out.println("WriteFile : "+s);
+                s+="\r\n";
                 fo.write(s.getBytes());
             }
+            fo.close();
+
         }catch(FileNotFoundException e){
+            System.out.println("erreur 404");
+            System.out.println(e.getMessage());
             return 404;
         }catch(IOException e){
+            System.out.println("erreur 500");
+            System.out.println(e.getMessage());
             return 500;
         }
+        System.out.println("coucou2");
         return 0;
 
     }
