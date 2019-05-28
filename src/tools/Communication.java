@@ -22,7 +22,10 @@ public class Communication implements Runnable {
         int requestreturn = 0;
 		try {
 			String line = in.readLine();
+			System.out.println(line);
+
             String[] head = line.split(" ");
+			System.out.println(head.length);
 			String request = head[0];
 			String filename = head[1];
 			String httpVersion = head[2];
@@ -31,6 +34,8 @@ public class Communication implements Runnable {
 
 			if (!httpVersion.toLowerCase().equals("HTTP/1.1")) {
 			    sendError(505);
+				System.out.println("ERREUR 505");
+			    in.reset();
 			    return true;
             }
 
