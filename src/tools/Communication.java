@@ -43,7 +43,7 @@ public class Communication implements Runnable {
 			}
 			switch (request) {
 				case "GET":
-					GestionHttp.sendFile(out, filename, request_number);
+					GestionHttp.sendFile(out, filename);
 					break;
 				case "PUT":
 					GestionHttp.receiveFile(in, filename);

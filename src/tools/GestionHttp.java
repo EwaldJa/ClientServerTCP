@@ -4,12 +4,11 @@ import java.io.*;
 
 public class GestionHttp {
 
-    private String http_version = "HTTP/1.1 ";
-    private String connection = "Connection: ";
-    private String keep_alive = "Keep-Alive: ";
+    private final static String http_version_tag = "HTTP/1.1 ";
+    private final static String content_length_tag = "Content-Length: ";
 
-    public static int sendFile(PrintWriter pw, String filename, int request_number){
-        String s;
+    protected static int sendFile(PrintWriter pw, String filename, String header){
+        String payload;
         try{
             byte[] buff = new byte[512];
             File file = new File(filename);
@@ -25,23 +24,24 @@ public class GestionHttp {
             } catch (IOException e) {
                 //TODO deal with the exception
             }
-            s = new String(baos.toByteArray(), "UTF-8");
+            payload = new String(baos.toByteArray(), "UTF-8");
+            String contentLength = content_length_tag + payload.length() + "\r\n";
+            String totalRequest = header + contentLength + payload;
+            pw.print(totalRequest);
+            pw.flush();
+            return 0;
         }
         catch(FileNotFoundException e) {
-            e.printStackTrace();
-            return 2;
+            return 404;
+
         }
 
         catch (IOException e) {
-            e.printStackTrace();
+            //TODO deal with the exception
             return 1;
         }
-        //TODO create the header
-        pw.println(s);
-        pw.flush();
-        return 0;
     }
-    public static int receiveFile(BufferedReader buff, String filename){
+    protected static int receiveFile(BufferedReader buff, String filename){
         try{
             String s = "";
             File file = new File(filename);
