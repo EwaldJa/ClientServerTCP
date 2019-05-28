@@ -23,15 +23,16 @@ public class LocalClient {
 
 
             String reponse=buffSocket.readLine();
-            if(reponse.split(" ")[1]!="200"){
+            if(reponse.split(" ").length>1 && reponse.split(" ")[1]!="200"){
                 return -1;
             }
 
             while(buffSocket.readLine()!="");
             GestionHttpClient.writeFile(buffSocket,filepath);
 
-
-
+            header = "HTTP/1.1+\r\nConnection: close\r\n\r\n";
+            outSocket.print(header);
+            outSocket.flush();
 
         } catch (UnknownHostException e) {
             e.printStackTrace();
@@ -44,7 +45,25 @@ public class LocalClient {
 
         return 0;
     }
+    public static int quitter(String server_address_str, String server_port_str) {
+        try {
+            InetAddress ServeurAdresse= InetAddress.getByName(server_address_str);
+            Socket socket = new Socket(ServeurAdresse, Integer.parseInt(server_port_str));
 
+            //send get
+            String header = "HTTP/1.1+\r\nConnection: close\r\n\r\n";
+            PrintWriter outSocket = new PrintWriter(socket.getOutputStream());
+            outSocket.print(header);
+            outSocket.flush();
+            return 0;
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+            return 1;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return 2;
+        }
+    }
     public static int SendFile(String server_address_str, String server_port_str, String filepath) {
         try {
             File file = new File(filepath);
