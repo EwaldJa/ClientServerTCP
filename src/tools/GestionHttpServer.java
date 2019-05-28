@@ -15,7 +15,7 @@ public class GestionHttpServer extends GestionHttp {
     public static int writeFile(BufferedReader buff, String filename) {
         filename=filename.split("/")[filename.split("/").length-1];
         String filepath = "server/" + filename;
-        System.out.println("coucou");
+        //System.out.println("coucou");
         return GestionHttp.writeFile(buff, filename);
     }
 }

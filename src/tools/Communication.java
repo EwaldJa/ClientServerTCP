@@ -33,7 +33,7 @@ public class Communication implements Runnable {
 			if (!httpVersion.toLowerCase().equals("http/1.1")) {
 			    sendError(505);
 				System.out.println("ERREUR 505");
-			    in.reset();
+			    //in.reset();
 			    return true;
             }
 
