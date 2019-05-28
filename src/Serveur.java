@@ -36,7 +36,7 @@ public class Serveur implements Runnable {
     }
     public void run(){
         while(true){
-            new Thread(new Communication(this.recevoir())).start();
+            new Thread(new Communication(this.recevoirConnection())).start();
             System.out.println("La connection a été établie");
         }
     }

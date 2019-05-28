@@ -24,7 +24,7 @@ public class StartView extends Application {
         }
 
         if (root != null) {
-            primaryStage.setTitle("GERARAR");
+            primaryStage.setTitle("HTTP");
             primaryStage.setScene(new Scene(root, 800, 500));
             primaryStage.setResizable(false);
             primaryStage.show();
