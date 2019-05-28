@@ -4,7 +4,6 @@ import java.io.*;
 
 public class GestionHttp {
 
-    private final static String http_version_tag = "HTTP/1.1 ";
     private final static String content_length_tag = "Content-Length: ";
 
     protected static int sendFile(PrintWriter pw, String filename, String header){
@@ -41,7 +40,7 @@ public class GestionHttp {
             return 1;
         }
     }
-    protected static int receiveFile(BufferedReader buff, String filename){
+    protected static int writeFile(BufferedReader buff, String filename){
         try{
             String s = "";
             File file = new File(filename);
