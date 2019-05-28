@@ -30,6 +30,8 @@ public class Communication implements Runnable {
 			String filename = head[1];
 			String httpVersion = head[2];
 
+			mylogger.log(Logger.DEBUG, "Requête reçue : " + line + " , requete" + request +", fichier" + filename + ", http" + httpVersion);
+
 			if (!httpVersion.toLowerCase().equals("http/1.1")) {
 			    sendError(505);
 				System.out.println("ERREUR 505");
@@ -37,12 +39,12 @@ public class Communication implements Runnable {
 			    return true;
             }
 
-			String[] field;
 			boolean headerskipped = false;
 			while (!headerskipped) {
 				line = in.readLine();
-				System.out.println("HEADER : "+line);
-				field = line.split(" ");
+				String[] field = line.split(" ");
+				mylogger.log(Logger.DEBUG, "field complet : " + line + " , champ : " + field[0]);
+				mylogger.log(Logger.DEBUG, "valeur : " + field[1]);
 				if (field[0].equals("Connection:")) {
 					closeConnection = (field[1].toLowerCase().equals("close"));
 				}
@@ -96,6 +98,7 @@ public class Communication implements Runnable {
                 error_name = "Internal Server Error";
                 break;
         }
+        mylogger.log(Logger.DEBUG, "Appel à sendError : " + error_code + ":" + error_name);
         String request = "HTTP/1.1 " + error_code + error_name + "\r\n";
 	    String connection = "Connection: close\r\n";
 	    out.write(request + connection);
