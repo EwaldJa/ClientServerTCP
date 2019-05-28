@@ -32,7 +32,7 @@ public class Communication implements Runnable {
 
 			mylogger.log(Logger.DEBUG, "Requête reçue : " + line + " , requete" + request +", fichier" + filename + ", http" + httpVersion);
 
-			if (!httpVersion.toLowerCase().equals("HTTP/1.1")) {
+			if (!httpVersion.toLowerCase().equals("http/1.1")) {
 			    sendError(505);
 				System.out.println("ERREUR 505");
 			    in.reset();
