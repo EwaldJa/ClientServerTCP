@@ -1,4 +1,4 @@
-package src.view;
+package src.Vue;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

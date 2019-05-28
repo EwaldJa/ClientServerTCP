@@ -70,9 +70,9 @@ public class LocalClient {
             File file = new File(filepath);
             InetAddress ServeurAdresse= InetAddress.getByName(server_address_str);
             Socket socket = new Socket(ServeurAdresse, Integer.parseInt(server_port_str));
-            //socket.getInputStream();
 
-
+            PrintWriter outSocket = new PrintWriter(socket.getOutputStream());
+            GestionHttpClient.sendFile(outSocket, filepath);
 
         } catch (UnknownHostException e) {
             e.printStackTrace();
