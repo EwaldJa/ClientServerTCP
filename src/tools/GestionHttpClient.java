@@ -14,6 +14,6 @@ public class GestionHttpClient extends GestionHttp {
 
     public static int writeFile(BufferedReader buff, String filename) {
 
-        return GestionHttp.writeFile(buff, filename);
+        return GestionHttp.writeFile(buff, "client"+filename);
     }
 }
