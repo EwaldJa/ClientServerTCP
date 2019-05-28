@@ -2,7 +2,6 @@ package src.tools;
 
 
 import java.io.*;
-import java.net.DatagramPacket;
 import java.net.Socket;
 import java.util.ArrayList;
 
@@ -43,10 +42,10 @@ public class Communication implements Runnable {
 			}
 			switch (request) {
 				case "GET":
-					GestionHttp.sendFile(out, filename);
+					GestionHttpServer.sendFile(out, filename);
 					break;
 				case "PUT":
-					GestionHttp.receiveFile(in, filename);
+                    GestionHttpServer.writeFile(in, filename);
 					break;
 				default:
 					break;
