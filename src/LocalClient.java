@@ -23,11 +23,11 @@ public class LocalClient {
 
 
             String reponse=buffSocket.readLine();
-            if(reponse.split(" ").length>1 && reponse.split(" ")[1]!="200"){
+            if(reponse.split(" ").length>1 && !reponse.split(" ")[1].equals("200")){
                 return -1;
             }
 
-            while(buffSocket.readLine()!="");
+            while(!buffSocket.readLine().equals(""));
             GestionHttpClient.writeFile(buffSocket,filepath);
 
             header = "HTTP/1.1+\r\nConnection: close\r\n\r\n";
