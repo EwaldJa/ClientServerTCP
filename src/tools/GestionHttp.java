@@ -18,21 +18,26 @@ public class GestionHttp {
             int size = fo.read(buff);
             totallength+=size;
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            System.out.println(" SendFile 1");
             try {
                 baos.write(buff);
                 while (size == byte_number_read) {
                     size = fo.read(buff);
                     totallength+=size;
                     baos.write(buff);
+                    System.out.println(" SendFile 2");
                 }
             } catch (IOException e) {
                 //TODO deal with the exception
             }
+            System.out.println(" SendFile 3");
             payload = new String(baos.toByteArray(), StandardCharsets.US_ASCII);
             String contentLength = content_length_tag + totallength + "\r\n\r\n";
             String totalRequest = header + contentLength + payload;
             pw.print(totalRequest);
             pw.flush();
+            fo.close();
+            System.out.println("fin SendFile");
             return 0;
         }
         catch(FileNotFoundException e) {
