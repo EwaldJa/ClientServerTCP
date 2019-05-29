@@ -73,7 +73,7 @@ public class LocalClient {
             Socket socket = new Socket(ServeurAdresse, Integer.parseInt(server_port_str));
 
             PrintWriter outSocket = new PrintWriter(socket.getOutputStream());
-            GestionHttpClient.sendFile(outSocket, file.getName());
+            GestionHttpClient.sendFile(outSocket, filepath, file.getName());
 
         } catch (UnknownHostException e) {
             e.printStackTrace();

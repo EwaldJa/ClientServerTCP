@@ -6,10 +6,10 @@ import java.io.PrintWriter;
 
 public class GestionHttpClient extends GestionHttp {
 
-    public static int sendFile(PrintWriter pw, String filename) {
+    public static int sendFile(PrintWriter pw, String filepath, String filename) {
         //TODO créer le header
         String header = "PUT " + filename + " HTTP/1.1\r\n";
-        return GestionHttp.sendFile(pw, filename, header);
+        return GestionHttp.sendFile(pw, filepath, header);
     }
 
     public static int writeFile(BufferedReader buff, String filename) {
