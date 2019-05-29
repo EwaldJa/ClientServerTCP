@@ -17,7 +17,7 @@ public class LocalClient {
             BufferedReader buffSocket=new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
             //send get
-            String header = "GET " + filepath + " HTTP/1.1\r\nHost: "+server_address_str+"\r\n";
+            String header = "GET " + filepath + " HTTP/1.1\r\nHost: "+server_address_str+"\r\n\r\n";
             PrintWriter outSocket = new PrintWriter(socket.getOutputStream());
             outSocket.print(header);
             outSocket.flush();
