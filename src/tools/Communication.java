@@ -35,7 +35,7 @@ public class Communication implements Runnable {
 			    return true;
             }
 
-			int length;
+			int length=0;
 			boolean headerskipped = false;
 			while (!headerskipped) {
 				line = in.readLine();
@@ -63,7 +63,7 @@ public class Communication implements Runnable {
 					break;
 				case "PUT":
 					mylogger.log(Logger.DEBUG, "Appel à writeFile");
-                    requestreturn = GestionHttpServer.writeFile(in, filename);
+                    requestreturn = GestionHttpServer.writeFile(in, filename, length);
 					mylogger.log(Logger.DEBUG, "writeFile réalisé, retour : " + requestreturn);
 					break;
 				default:

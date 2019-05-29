@@ -43,15 +43,21 @@ public class GestionHttp {
         }
     }
     protected static int writeFile(BufferedReader buff, String filename, int length){
+        int writtenbyte = 0;
         try{
             String s = "";
             File file = new File(filename);
             FileOutputStream fo = new FileOutputStream(file);
 
-            while(!(s = buff.readLine()).isEmpty()) {
+            while (length >= writtenbyte) {
+                s = buff.readLine();
                 System.out.println("WriteFile : "+s);
                 s+="\r\n";
+                writtenbyte+=(s.getBytes().length);
+                if (writtenbyte > length) {
+                    break;                }
                 fo.write(s.getBytes());
+                fo.flush();
             }
             fo.close();
 
