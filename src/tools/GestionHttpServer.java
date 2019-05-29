@@ -12,8 +12,8 @@ public class GestionHttpServer extends GestionHttp {
         return GestionHttp.sendFile(pw, filepath, header);
     }
 
-    public static int writeFile(BufferedReader buff, String filename) {
+    public static int writeFile(BufferedReader buff, String filename, int length) {
 
-        return GestionHttp.writeFile(buff, "server"+filename);
+        return GestionHttp.writeFile(buff, "server"+filename, length);
     }
 }

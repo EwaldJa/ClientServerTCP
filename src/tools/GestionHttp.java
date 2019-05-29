@@ -6,12 +6,13 @@ import java.nio.charset.StandardCharsets;
 public class GestionHttp {
 
     private final static String content_length_tag = "Content-Length: ";
+    private final static int byte_number_read = 2048;
 
     protected static int sendFile(PrintWriter pw, String filepath, String header){
         String payload;
         try{
             int totallength = 0;
-            byte[] buff = new byte[512];
+            byte[] buff = new byte[byte_number_read];
             File file = new File(filepath);
             FileInputStream fo = new FileInputStream(file);
             int size = fo.read(buff);
@@ -19,7 +20,7 @@ public class GestionHttp {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             try {
                 baos.write(buff);
-                while (size == 512) {
+                while (size == byte_number_read) {
                     size = fo.read(buff);
                     totallength+=size;
                     baos.write(buff);
@@ -41,7 +42,7 @@ public class GestionHttp {
             return 500;
         }
     }
-    protected static int writeFile(BufferedReader buff, String filename){
+    protected static int writeFile(BufferedReader buff, String filename, int length){
         try{
             String s = "";
             File file = new File(filename);

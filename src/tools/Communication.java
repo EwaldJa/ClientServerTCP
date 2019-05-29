@@ -35,6 +35,7 @@ public class Communication implements Runnable {
 			    return true;
             }
 
+			int length;
 			boolean headerskipped = false;
 			while (!headerskipped) {
 				line = in.readLine();
@@ -48,19 +49,22 @@ public class Communication implements Runnable {
 				if (field[0].equals("Connection:")) {
 					closeConnection = (field[1].toLowerCase().equals("close"));
 				}
+				if (field[0].equals("Content-Length:")) {
+					length = Integer.parseInt(field[1]);
+				}
 				mylogger.log(Logger.DEBUG, "headerskipped:"+headerskipped);
 			}
 			mylogger.log(Logger.DEBUG, "Header passé");
 			switch (request) {
 				case "GET":
-					mylogger.log(Logger.DEBUG, "Appel à GET");
+					mylogger.log(Logger.DEBUG, "Appel à sendFile");
 					requestreturn = GestionHttpServer.sendFile(out, filename);
-					mylogger.log(Logger.DEBUG, "GET réalisé, retour : " + requestreturn);
+					mylogger.log(Logger.DEBUG, "sendFile réalisé, retour : " + requestreturn);
 					break;
 				case "PUT":
-					mylogger.log(Logger.DEBUG, "Appel à PUT");
+					mylogger.log(Logger.DEBUG, "Appel à writeFile");
                     requestreturn = GestionHttpServer.writeFile(in, filename);
-					mylogger.log(Logger.DEBUG, "PUT réalisé, retour : " + requestreturn);
+					mylogger.log(Logger.DEBUG, "writeFile réalisé, retour : " + requestreturn);
 					break;
 				default:
                     requestreturn = 400;

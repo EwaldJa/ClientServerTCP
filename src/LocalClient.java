@@ -29,7 +29,7 @@ public class LocalClient {
             }
 
             while(!buffSocket.readLine().equals(""));
-            GestionHttpClient.writeFile(buffSocket,file.getName());
+            GestionHttpClient.writeFile(buffSocket,file.getName(), 1212);
 
             header = "HTTP/1.1\r\nConnection: close\r\n\r\n";
             outSocket.print(header);
