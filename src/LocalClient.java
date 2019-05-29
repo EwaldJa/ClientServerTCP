@@ -29,7 +29,7 @@ public class LocalClient {
             }
 
             while(!buffSocket.readLine().equals(""));
-            GestionHttpClient.writeFile(buffSocket,file.getName(), 1212);
+            GestionHttpClient.writeFile(socket.getInputStream(),file.getName(), 1212);
 
 
         } catch (UnknownHostException e) {

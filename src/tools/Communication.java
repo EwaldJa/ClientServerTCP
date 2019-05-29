@@ -63,7 +63,7 @@ public class Communication implements Runnable {
 					break;
 				case "PUT":
 					mylogger.log(Logger.DEBUG, "Appel à writeFile");
-                    requestreturn = GestionHttpServer.writeFile(in, filename, length);
+                    requestreturn = GestionHttpServer.writeFile(clt_socket.getInputStream(), filename, length);
 					mylogger.log(Logger.DEBUG, "writeFile réalisé, retour : " + requestreturn);
 					break;
 				default:

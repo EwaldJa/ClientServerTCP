@@ -1,6 +1,6 @@
 package src.tools;
 
-import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 public class GestionHttpClient extends GestionHttp {
@@ -10,7 +10,7 @@ public class GestionHttpClient extends GestionHttp {
         return GestionHttp.sendFile(os, filepath, header);
     }
 
-    public static int writeFile(BufferedReader buff, String filename, int length) {
-        return GestionHttp.writeFile(buff, "client"+filename, length);
+    public static int writeFile(InputStream in, String filename, int length) {
+        return GestionHttp.writeFile(in, "client"+filename, length);
     }
 }

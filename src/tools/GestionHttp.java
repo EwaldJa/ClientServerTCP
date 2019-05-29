@@ -47,7 +47,7 @@ public class GestionHttp {
             return 500;
         }
     }
-    protected static int writeFile(BufferedReader buff, String filename, int length){
+    protected static int writeFile(InputStream in, String filename, int length){
         int writtenbyte = 0;
         try{
             String s = "";
@@ -55,17 +55,26 @@ public class GestionHttp {
             FileOutputStream fo = new FileOutputStream(file);
 
             while (length >= writtenbyte) {
-                s = buff.readLine();
-                System.out.println("WriteFile : "+s);
+                int read = in.read();
+                System.out.println("octet :" + read);
+                if (read == -1) {
+                    break;
+                } else {
+                    fo.write(read);
+                    fo.flush();
+                }
+
+                /*
+                s = in.readLine();
                 fo.write(s.getBytes());
                 fo.flush();
                 writtenbyte+=(s.getBytes().length + "\r\n".getBytes().length);
                 if (writtenbyte >= length) {
                     break;
                 }
-                System.out.println("WriteFile : crlf");
                 fo.write("\r\n".getBytes());
                 fo.flush();
+                */
             }
             fo.close();
 
