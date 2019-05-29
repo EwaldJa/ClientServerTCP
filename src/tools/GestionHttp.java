@@ -47,7 +47,7 @@ public class GestionHttp {
             File file = new File(filename);
             FileOutputStream fo = new FileOutputStream(file);
 
-            while((s = buff.readLine()).isEmpty()) {
+            while(!(s = buff.readLine()).isEmpty()) {
                 System.out.println("WriteFile : "+s);
                 s+="\r\n";
                 fo.write(s.getBytes());
