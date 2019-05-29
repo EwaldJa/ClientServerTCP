@@ -7,12 +7,12 @@ public class GestionHttp {
 
     private final static String content_length_tag = "Content-Length: ";
 
-    protected static int sendFile(PrintWriter pw, String filename, String header){
+    protected static int sendFile(PrintWriter pw, String filepath, String header){
         String payload;
         try{
             int totallength = 0;
             byte[] buff = new byte[512];
-            File file = new File(filename);
+            File file = new File(filepath);
             FileInputStream fo = new FileInputStream(file);
             int size = fo.read(buff);
             totallength+=size;
