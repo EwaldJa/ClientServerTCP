@@ -58,7 +58,7 @@ public class Communication implements Runnable {
 			switch (request) {
 				case "GET":
 					mylogger.log(Logger.DEBUG, "Appel à sendFile");
-					requestreturn = GestionHttpServer.sendFile(out, filename);
+					requestreturn = GestionHttpServer.sendFile(clt_socket.getOutputStream(), filename);
 					mylogger.log(Logger.DEBUG, "sendFile réalisé, retour : " + requestreturn);
 					break;
 				case "PUT":

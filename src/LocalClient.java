@@ -69,8 +69,8 @@ public class LocalClient {
             InetAddress ServeurAdresse= InetAddress.getByName(server_address_str);
             Socket socket = new Socket(ServeurAdresse, Integer.parseInt(server_port_str));
 
-            PrintWriter outSocket = new PrintWriter(socket.getOutputStream());
-            GestionHttpClient.sendFile(outSocket, filepath, file.getName());
+            //PrintWriter outSocket = new PrintWriter(socket.getOutputStream());
+            GestionHttpClient.sendFile(socket.getOutputStream(), filepath, file.getName());
 
         } catch (UnknownHostException e) {
             e.printStackTrace();

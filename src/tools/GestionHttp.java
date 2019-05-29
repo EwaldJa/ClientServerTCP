@@ -1,15 +1,13 @@
 package src.tools;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 
 public class GestionHttp {
 
     private final static String content_length_tag = "Content-Length: ";
     private final static int byte_number_read = 2048;
 
-    protected static int sendFile(PrintWriter pw, String filepath, String header){
-        String payload;
+    protected static int sendFile(OutputStream os, String filepath, String header){
         try{
             int totallength = 0;
             byte[] buff = new byte[byte_number_read];
@@ -30,13 +28,15 @@ public class GestionHttp {
             } catch (IOException e) {
                 //TODO deal with the exception
             }
-            System.out.println(" SendFile 3");
-            payload = new String(baos.toByteArray(), StandardCharsets.US_ASCII);
-            String contentLength = content_length_tag + totallength + "\r\n\r\n";
-            String totalRequest = header + contentLength + payload;
-            pw.print(totalRequest);
-            pw.flush();
             fo.close();
+            System.out.println(" SendFile 3");
+            String contentLength = content_length_tag + totallength + "\r\n\r\n";
+            String totalRequest = header + contentLength;// + payload;
+            os.write(totalRequest.getBytes());
+            os.flush();
+            os.write(baos.toByteArray());
+            os.flush();
+            os.close();
             System.out.println("fin SendFile");
             return 0;
         }
@@ -57,11 +57,14 @@ public class GestionHttp {
             while (length >= writtenbyte) {
                 s = buff.readLine();
                 System.out.println("WriteFile : "+s);
-                s+="\r\n";
-                writtenbyte+=(s.getBytes().length);
-                if (writtenbyte > length) {
-                    break;                }
                 fo.write(s.getBytes());
+                fo.flush();
+                writtenbyte+=(s.getBytes().length + "\r\n".getBytes().length);
+                if (writtenbyte >= length) {
+                    break;
+                }
+                System.out.println("WriteFile : crlf");
+                fo.write("\r\n".getBytes());
                 fo.flush();
             }
             fo.close();
