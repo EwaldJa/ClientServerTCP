@@ -25,7 +25,7 @@ public class GestionHttp {
                 s += new String(buff, StandardCharsets.ISO_8859_1);
             }
 
-            String contentLength = content_length_tag + s.length() + "\r\n\r\n";
+            String contentLength = content_length_tag + totallength + "\r\n\r\n";
             String totalRequest = header + contentLength;// + payload;
             bos.write(totalRequest.getBytes(StandardCharsets.UTF_8));
             bos.flush();
@@ -48,7 +48,7 @@ public class GestionHttp {
         try{
             File file = new File(filename);
             FileOutputStream fo = new FileOutputStream(file);
-            System.out.println("ecriture1 : filename=" + filename + ", lenght=" + length);
+            //System.out.println("ecriture1 : filename=" + filename + ", lenght=" + length);
             while(writtenbyte < length) {
                 //System.out.print("lecture octet, valeur:");
                 byteread = bis.read();
@@ -58,11 +58,11 @@ public class GestionHttp {
                     //System.out.println(", writtenbyte=" + writtenbyte);
                     fo.write(byteread);
                 } else {
-                    System.out.println("breaké");
+                    //System.out.println("breaké");
                     break;
                 }
             }
-            System.out.println("sorti while");
+            //System.out.println("sorti while");
             fo.flush();
             fo.close();
             return LocalClient.transfer_successful;

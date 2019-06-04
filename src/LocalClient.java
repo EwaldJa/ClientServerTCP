@@ -26,13 +26,12 @@ public class LocalClient {
         bis = new BufferedInputStream(socket.getInputStream());
     }
 
-    public int ReceiveFile(String server_address_str, String server_port_str, String filepath) {
+    public int ReceiveFile(String server_address_str, String server_port_str, String filename) {
         try {
-            File file = new File(filepath);
             verifSocket(server_address_str, server_port_str);
 
             PrintWriter out = new PrintWriter(socket.getOutputStream());
-            String header = "GET " + filepath + " HTTP/1.1\r\nHost: "+server_address_str+"\r\n\r\n";
+            String header = "GET " + filename + " HTTP/1.1\r\nHost: "+server_address_str+"\r\n\r\n";
             out.print(header);
             out.flush();
 
@@ -53,7 +52,6 @@ public class LocalClient {
             boolean headerskipped = false;
             while (!headerskipped) {
                 line = buffSocket.readLine();
-                System.out.println("'" + line + "'");
                 if (line.equals("")) {
                     headerskipped = true;
                     break;
@@ -63,9 +61,8 @@ public class LocalClient {
                     length = Integer.parseInt(field[1]);
                 }
             }
-            System.out.println(length);
             if (length == 0) return 411;
-            return GestionHttpClient.writeFile(bis,file.getName(), length);
+            return GestionHttpClient.writeFile(bis, filename, length);
         } catch (UnknownHostException e) {
             e.printStackTrace();
             return unknown_server;
@@ -131,6 +128,7 @@ public class LocalClient {
 
     private void verifSocket(String server_address_str, String server_port_str) throws UnknownHostException, IOException {
         if ( (server_address != server_address_str) || (server_port != server_port_str) ) {
+            System.out.println("Redéfinition du socket");
             socket = new Socket(InetAddress.getByName(server_address_str), Integer.parseInt(server_port_str));
             bos = new BufferedOutputStream(socket.getOutputStream());
             bis = new BufferedInputStream(socket.getInputStream());
