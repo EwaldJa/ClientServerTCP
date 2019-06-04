@@ -5,15 +5,22 @@ import java.io.*;
 import java.net.Socket;
 
 public class Communication implements Runnable {
+
+	private static int CommID;
 	
 	private Socket clt_socket;
 	private Logger mylogger;
 	private BufferedReader in;
 	private PrintWriter out;
+	private BufferedOutputStream bos;
+	private BufferedInputStream bis;
 
-	public Communication(Socket socket) {
+	public Communication(Socket socket) throws IOException{
+		CommID++;
 		clt_socket = socket;
-		mylogger = new Logger("defaultconfigCommunication.txt", "Communication port" + clt_socket.getLocalPort());
+		mylogger = new Logger("defaultconfigCommunication.txt", "Communication" + CommID);
+		bos = new BufferedOutputStream(clt_socket.getOutputStream());
+		bis = new BufferedInputStream(clt_socket.getInputStream());
 	}
 
 	
@@ -25,8 +32,13 @@ public class Communication implements Runnable {
 
             String[] head = line.split(" ");
 			String request = head[0];
-			String filename = head[1];
-			String httpVersion = head[2];
+			String filename = "";
+			for (int i = 1; i < head.length - 2; i ++) {
+				filename += head[i] + " ";
+				System.out.println(filename);
+			}
+			filename += head[head.length-2];
+			String httpVersion = head[head.length-1];
 
 			mylogger.log(Logger.DEBUG, "Requête reçue : " + line + " , requete " + request +", fichier " + filename + ", http " + httpVersion);
 
@@ -58,12 +70,12 @@ public class Communication implements Runnable {
 			switch (request) {
 				case "GET":
 					mylogger.log(Logger.DEBUG, "Appel à sendFile");
-					requestreturn = GestionHttpServer.sendFile(clt_socket.getOutputStream(), filename);
+					requestreturn = GestionHttpServer.sendFile(bos, filename);
 					mylogger.log(Logger.DEBUG, "sendFile réalisé, retour : " + requestreturn);
 					break;
 				case "PUT":
 					mylogger.log(Logger.DEBUG, "Appel à writeFile");
-                    requestreturn = GestionHttpServer.writeFile(clt_socket.getInputStream(), filename, length);
+                    requestreturn = GestionHttpServer.writeFile(bis, filename, length);
 					mylogger.log(Logger.DEBUG, "writeFile réalisé, retour : " + requestreturn);
 					break;
 				default:
@@ -89,7 +101,7 @@ public class Communication implements Runnable {
 	}
 	
 	private void sendError(int error_code) {
-	    String error_name = "";
+	    String error_name;
 	    switch (error_code) {
             case 400:
                 error_name = "Bad Request";
@@ -109,7 +121,7 @@ public class Communication implements Runnable {
                 break;
         }
         mylogger.log(Logger.DEBUG, "Appel à sendError : " + error_code + ":" + error_name);
-        String request = "HTTP/1.1 " + error_code + error_name + "\r\n";
+        String request = "HTTP/1.1 " + error_code + " " + error_name + "\r\n";
 	    String connection = "Connection: close\r\n";
 	    out.write(request + connection);
 	    out.flush();
@@ -130,7 +142,7 @@ public class Communication implements Runnable {
 			mylogger.log(Logger.IMPORTANT, e.getMessage());
 		}
 
-		while (!recevoir()) {/*Reçoit et répond au client*/}
+		while (!recevoir()) {/*Reçoit et répond au client*/System.out.println("coucou1212");}
 		try {
 			in.close();
 		} catch (IOException e) {
@@ -141,6 +153,7 @@ public class Communication implements Runnable {
 	}
 	
 	public void finalize() throws Throwable{
+		clt_socket.close();
 		mylogger.dispose();
 		super.finalize();
 	}

@@ -1,7 +1,6 @@
 package src;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import src.tools.*;
@@ -11,9 +10,9 @@ public class Serveur implements Runnable {
 
     private ServerSocket servSocket;
 
-    public Serveur(int port, int backlog){
+    public Serveur(int port){
         try {
-            this.servSocket = new ServerSocket(port, backlog);
+            servSocket = new ServerSocket(port);
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("Le port est inaccessible");
@@ -21,20 +20,23 @@ public class Serveur implements Runnable {
     }
 
     private Socket recevoirConnection(){
-        Socket servConnect = null;
-
         try {
-            servConnect = this.servSocket.accept();
-            return servConnect;
+            return servSocket.accept();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return servConnect;
+        return null;
     }
     public void run(){
         while(true){
-            new Thread(new Communication(this.recevoirConnection())).start();
-            System.out.println("La connection a été établie");
+            try {
+                new Thread(new Communication(recevoirConnection())).start();
+                System.out.println("La connection a été établie");
+            } catch (IOException e) {
+                System.out.println("Impossible d'établir la connection : ");
+                System.out.println(e.getMessage());
+            }
+
         }
     }
 

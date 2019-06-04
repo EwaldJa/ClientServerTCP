@@ -31,6 +31,7 @@ public class ViewControler {
     private final String succesTitre = "Transfert réussi";
     private final String succesTexte = "Transfert effectué avec succès";
 
+    private LocalClient client;
 
     @FXML
     private void initialize() {
@@ -48,6 +49,11 @@ public class ViewControler {
                 IP = TFadresseIP.getText();
                 port = TFport.getText();
                 newPopUp(ipTitre,ipTexte, PopUpType.INFO);
+                try {
+                    client = new LocalClient(IP, port);
+                } catch (Exception e) {
+                    newPopUp("Impossible d'initialiser", e.getMessage(), PopUpType.ERROR);
+                }
             }
         });
 
@@ -83,7 +89,7 @@ public class ViewControler {
     private void setupButtonEnvoyer(){
         buttonEnvoyer.setOnAction(event ->{
             if (testReadyE()) {
-                retourFonction = LocalClient.SendFile(IP, port, fichier);
+                retourFonction = client.SendFile(IP, port, fichier);
                 if (retourFonction != LocalClient.transfer_successful) {
                     newPopUp(erreurTitre, getErrorText(retourFonction), PopUpType.ERROR);
                     retourFonction = 0;
@@ -97,7 +103,7 @@ public class ViewControler {
     private void setupButtonTelecharger(){
         buttonTelecharger.setOnAction(event ->{
             if (testReadyR()) {
-                retourFonction = LocalClient.ReceiveFile(IP, port, TFnomFichier.getText());
+                retourFonction = client.ReceiveFile(IP, port, TFnomFichier.getText());
                 if (retourFonction != LocalClient.transfer_successful) {
                     newPopUp(erreurTitre, getErrorText(retourFonction), PopUpType.ERROR);
                     retourFonction = 0;
@@ -109,7 +115,16 @@ public class ViewControler {
     }
 
     private void setupButtonQuit() {
-        buttonQuitter.setOnAction(event -> ((Stage) mainPane.getScene().getWindow()).close());
+        buttonQuitter.setOnAction(event -> {
+            retourFonction = client.quitter(IP, port);
+            if (retourFonction != LocalClient.succesfully_turned_off) {
+                newPopUp(erreurTitre, getErrorText(retourFonction), PopUpType.ERROR);
+                retourFonction = 0;
+            }
+            else
+                newPopUp("Au revoir !","Déconnexion réussie", PopUpType.INFO);
+            ((Stage) mainPane.getScene().getWindow()).close();
+        });
     }
 
     private void setupTextField(){
@@ -163,31 +178,13 @@ public class ViewControler {
 
     private String getErrorText(int errorCode){
         switch (errorCode){
-            /*case LocalClient.error_unavailable_server: return "Serveur inaccessible";
-
-            case LocalClient.error_server_undefined: return "Erreur serveur : Inconnue";
-            case LocalClient.error_server_file_not_found: return "Erreur serveur : Fichier introuvable";
-            case LocalClient.error_server_access_violation: return "Erreur serveur : Accès interdit au fichier";
-            case LocalClient.error_server_disk_full: return "Erreur serveur : Disque serveur plein";
-            case LocalClient.error_server_illegal_tftp_operation: return "Erreur serveur : Opération TFTP non autorisée";
-            case LocalClient.error_server_unknown_transfer_id: return "Erreur serveur : L'ID de transfert ne correspond pas";
-            case LocalClient.error_server_file_already_exists: return "Erreur serveur : Le fichier existe déjà";
-            case LocalClient.error_server_unkown_user: return "Erreur serveur : Utilisateur inconnu";
-
-            case LocalClient.error_file_creation: return "Erreur locale : Impossible de créer le fichier";
-            case LocalClient.error_unable_to_send_packet: return "Erreur locale : Impossible d'envoyer des données au serveur";
-            case LocalClient.error_creating_socket: return "Erreur locale : Impossible de créer le socket de communication";
-            case LocalClient.error_merging_byte_arrays: return "Erreur locale : Impossible de créer un DatagramPacket";
-            case LocalClient.error_no_valid_server_address: return "Erreur locale : Adresse serveur non-valide";
-            case LocalClient.error_no_valid_server_port: return "Erreur locale : Port serveur non-valide";
-            case LocalClient.error_while_dealing_exception: return "Erreur locale : Impossible de déterminer l'erreur";
-
-            case LocalClient.error_client_undefined: return "Erreur locale : Inconnue";
-            case LocalClient.error_client_file_not_found: return "Erreur locale : Fichier introuvable";
-            case LocalClient.error_client_access_violation: return "Erreur locale : Accès interdit au fichier";
-            case LocalClient.error_client_disk_full: return "Erreur locale : Disque LocalClient plein";
-            case LocalClient.error_client_illegal_tftp_operation: return "Erreur locale : Opération TFTP non autorisée";*/
+            case LocalClient.local_error: return "Erreur locale inconnue";
+            case LocalClient.unknown_server: return "Serveur inexistant";
+            case 400: return "400 : Bad Request";
+            case 404: return "404 : Not Found";
+            case 500: return "500 : Internal Server Error";
+            case 505: return "505 : HTTP Version not supported";
+            default: return "Erreur inconnue" + errorCode;
         }
-        return "Erreur inconnue";
     }
 }

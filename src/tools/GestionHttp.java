@@ -1,44 +1,39 @@
 package src.tools;
 
+import src.LocalClient;
+
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 public class GestionHttp {
 
     private final static String content_length_tag = "Content-Length: ";
     private final static int byte_number_read = 2048;
 
-    protected static int sendFile(OutputStream os, String filepath, String header){
+    protected static int sendFile(BufferedOutputStream bos, String filepath, String header){
         try{
             int totallength = 0;
             byte[] buff = new byte[byte_number_read];
             File file = new File(filepath);
             FileInputStream fo = new FileInputStream(file);
             int size = fo.read(buff);
+
             totallength+=size;
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            System.out.println(" SendFile 1");
-            try {
-                baos.write(buff);
-                while (size == byte_number_read) {
-                    size = fo.read(buff);
-                    totallength+=size;
-                    baos.write(buff);
-                    System.out.println(" SendFile 2");
-                }
-            } catch (IOException e) {
-                //TODO deal with the exception
+            String s = new String(buff, StandardCharsets.ISO_8859_1);
+            while (size == byte_number_read) {
+                size = fo.read(buff);
+                totallength+=size;
+                s += new String(buff, StandardCharsets.ISO_8859_1);
             }
-            fo.close();
-            System.out.println(" SendFile 3");
+
             String contentLength = content_length_tag + totallength + "\r\n\r\n";
             String totalRequest = header + contentLength;// + payload;
-            os.write(totalRequest.getBytes());
-            os.flush();
-            os.write(baos.toByteArray());
-            os.flush();
-            os.close();
-            System.out.println("fin SendFile");
-            return 0;
+            bos.write(totalRequest.getBytes(StandardCharsets.UTF_8));
+            bos.flush();
+            bos.write(s.getBytes(StandardCharsets.ISO_8859_1));
+            bos.flush();
+            fo.close();
+            return LocalClient.transfer_successful;
         }
         catch(FileNotFoundException e) {
             return 404;
@@ -47,49 +42,37 @@ public class GestionHttp {
             return 500;
         }
     }
-    protected static int writeFile(InputStream in, String filename, int length){
+    protected static int writeFile(BufferedInputStream bis, String filename, int length){
+        int byteread = 0;
         int writtenbyte = 0;
         try{
-            String s = "";
             File file = new File(filename);
             FileOutputStream fo = new FileOutputStream(file);
-
-            while (length >= writtenbyte) {
-                int read = in.read();
-                System.out.println("octet :" + read);
-                if (read == -1) {
-                    break;
+            while(writtenbyte < length) {
+                System.out.print("lecture octet, ");
+                byteread = bis.read();
+                System.out.print("valeur : " + byteread);
+                if (byteread != -1) {
+                    writtenbyte++;
+                    System.out.println(", writtenbyte : " + writtenbyte);
+                    fo.write(byteread);
                 } else {
-                    fo.write(read);
-                    fo.flush();
-                }
-
-                /*
-                s = in.readLine();
-                fo.write(s.getBytes());
-                fo.flush();
-                writtenbyte+=(s.getBytes().length + "\r\n".getBytes().length);
-                if (writtenbyte >= length) {
+                    System.out.println("octet -1");
                     break;
                 }
-                fo.write("\r\n".getBytes());
-                fo.flush();
-                */
             }
+            System.out.println("breaké");
+            System.out.print("lecture octet, ");
+            byteread = bis.read();
+            System.out.print("valeur : " + byteread);
+            fo.flush();
             fo.close();
-
+            return LocalClient.transfer_successful;
         }catch(FileNotFoundException e){
-            System.out.println("erreur 404");
-            System.out.println(e.getMessage());
             return 404;
         }catch(IOException e){
-            System.out.println("erreur 500");
-            System.out.println(e.getMessage());
             return 500;
         }
-        System.out.println("coucou2");
-        return 0;
-
     }
 
 }
