@@ -38,6 +38,9 @@ public class Communication implements Runnable {
 				System.out.println(filename);
 			}
 			filename += head[head.length-2];
+			if (filename.charAt(0) == '/') {
+				filename = filename.substring(1);
+			}
 			String httpVersion = head[head.length-1];
 
 			mylogger.log(Logger.DEBUG, "Requête reçue : " + line + " , requete " + request +", fichier " + filename + ", http " + httpVersion);
@@ -88,7 +91,7 @@ public class Communication implements Runnable {
 			mylogger.log(Logger.IMPORTANT, e.getMessage());
 			requestreturn = 500;
 		} catch (NullPointerException e) {
-			mylogger.log(Logger.INFO, "Erreur NullPointer à la réception");
+			mylogger.log(Logger.INFO, "Erreur NullPointer à la réception : requete vide");
 			mylogger.log(Logger.DEBUG, e.getMessage());
 			requestreturn = 500;
 		} finally {
@@ -142,7 +145,7 @@ public class Communication implements Runnable {
 			mylogger.log(Logger.IMPORTANT, e.getMessage());
 		}
 
-		while (!recevoir()) {/*Reçoit et répond au client*/System.out.println("coucou1212");}
+		while (!recevoir()) {/*Reçoit et répond au client*/}
 		try {
 			in.close();
 		} catch (IOException e) {

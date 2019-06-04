@@ -3,9 +3,7 @@ package src;
 import src.tools.GestionHttpClient;
 
 import java.io.*;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
+import java.net.*;
 
 public class LocalClient {
 
@@ -39,14 +37,18 @@ public class LocalClient {
             out.flush();
 
             BufferedReader buffSocket = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            try {
+                Thread.sleep(10000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             int reponse = recevoir(buffSocket.readLine());
             if (reponse != 200) {
                 return reponse;
             }
 
             while(!buffSocket.readLine().equals(""));
-            GestionHttpClient.writeFile(bis,file.getName(), 1212);
-            return transfer_successful;
+            return GestionHttpClient.writeFile(bis,file.getName(), 1212);
         } catch (UnknownHostException e) {
             e.printStackTrace();
             return unknown_server;
@@ -79,13 +81,18 @@ public class LocalClient {
         try {
             File file = new File(filepath);
             verifSocket(server_address_str, server_port_str);
-            System.out.println("appel sendfile");
             int res = GestionHttpClient.sendFile(bos, filepath, file.getName());
             if (res != 0) return res;
-            System.out.println("sendfile fait : " + res);
 
             BufferedReader buffSocket = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            return recevoir(buffSocket.readLine());
+            socket.setSoTimeout(10000);
+            String response = null;
+            try {
+                response = buffSocket.readLine();
+            } catch (SocketTimeoutException e) {
+                return transfer_successful;
+            }
+            return recevoir(response);
         } catch (UnknownHostException e) {
             e.printStackTrace();
             return unknown_server;
@@ -96,14 +103,13 @@ public class LocalClient {
     }
 
     private int recevoir(String reponse) {
-        System.out.println("reponse : " + reponse);
         if (reponse != null) {
             String[] splittedresponse = reponse.split(" ");
             if (splittedresponse.length > 1) {
                 return Integer.parseInt(splittedresponse[1]);
             }
         }
-        return transfer_successful;
+        return local_error;
     }
 
     private void verifSocket(String server_address_str, String server_port_str) throws UnknownHostException, IOException {

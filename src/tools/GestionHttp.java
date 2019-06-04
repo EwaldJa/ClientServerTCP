@@ -49,22 +49,14 @@ public class GestionHttp {
             File file = new File(filename);
             FileOutputStream fo = new FileOutputStream(file);
             while(writtenbyte < length) {
-                System.out.print("lecture octet, ");
                 byteread = bis.read();
-                System.out.print("valeur : " + byteread);
                 if (byteread != -1) {
                     writtenbyte++;
-                    System.out.println(", writtenbyte : " + writtenbyte);
                     fo.write(byteread);
                 } else {
-                    System.out.println("octet -1");
                     break;
                 }
             }
-            System.out.println("breaké");
-            System.out.print("lecture octet, ");
-            byteread = bis.read();
-            System.out.print("valeur : " + byteread);
             fo.flush();
             fo.close();
             return LocalClient.transfer_successful;
