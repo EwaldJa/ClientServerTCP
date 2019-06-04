@@ -63,6 +63,9 @@ public class Communication implements Runnable {
 				mylogger.log(Logger.DEBUG, "valeur : " + field[1]);
 				if (field[0].equals("Connection:")) {
 					closeConnection = (field[1].toLowerCase().equals("close"));
+					if (closeConnection && request.equals("END") && filename.equals("nothing")) {
+					    return false;
+                    }
 				}
 				if (field[0].equals("Content-Length:")) {
 					length = Integer.parseInt(field[1]);
@@ -146,13 +149,14 @@ public class Communication implements Runnable {
 		}
 
 		while (!recevoir()) {/*Reçoit et répond au client*/}
+		mylogger.log(Logger.DEBUG, "Fermeture de la communication" + CommID);
 		try {
-			in.close();
+			clt_socket.close();
 		} catch (IOException e) {
 			mylogger.log(Logger.OFF, "Erreur à la fermeture du BufferedReader de la réception");
 			mylogger.log(Logger.IMPORTANT, e.getMessage());
 		}
-		out.close();
+
 	}
 	
 	public void finalize() throws Throwable{

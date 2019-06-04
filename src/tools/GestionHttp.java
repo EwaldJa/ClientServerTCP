@@ -10,11 +10,10 @@ public class GestionHttp {
     private final static String content_length_tag = "Content-Length: ";
     private final static int byte_number_read = 2048;
 
-    protected static int sendFile(BufferedOutputStream bos, String filepath, String header){
+    protected static int sendFile(BufferedOutputStream bos, File file, String header){
         try{
             int totallength = 0;
             byte[] buff = new byte[byte_number_read];
-            File file = new File(filepath);
             FileInputStream fo = new FileInputStream(file);
             int size = fo.read(buff);
 
@@ -26,7 +25,7 @@ public class GestionHttp {
                 s += new String(buff, StandardCharsets.ISO_8859_1);
             }
 
-            String contentLength = content_length_tag + totallength + "\r\n\r\n";
+            String contentLength = content_length_tag + s.length() + "\r\n\r\n";
             String totalRequest = header + contentLength;// + payload;
             bos.write(totalRequest.getBytes(StandardCharsets.UTF_8));
             bos.flush();
@@ -42,21 +41,28 @@ public class GestionHttp {
             return 500;
         }
     }
+
     protected static int writeFile(BufferedInputStream bis, String filename, int length){
-        int byteread = 0;
+        int byteread;
         int writtenbyte = 0;
         try{
             File file = new File(filename);
             FileOutputStream fo = new FileOutputStream(file);
+            System.out.println("ecriture1 : filename=" + filename + ", lenght=" + length);
             while(writtenbyte < length) {
+                //System.out.print("lecture octet, valeur:");
                 byteread = bis.read();
+                //System.out.print(byteread);
                 if (byteread != -1) {
                     writtenbyte++;
+                    //System.out.println(", writtenbyte=" + writtenbyte);
                     fo.write(byteread);
                 } else {
+                    System.out.println("breaké");
                     break;
                 }
             }
+            System.out.println("sorti while");
             fo.flush();
             fo.close();
             return LocalClient.transfer_successful;

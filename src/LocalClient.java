@@ -42,13 +42,30 @@ public class LocalClient {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            int reponse = recevoir(buffSocket.readLine());
+            String line = buffSocket.readLine();
+            System.out.println(line);
+            int reponse = recevoir(line);
             if (reponse != 200) {
                 return reponse;
             }
 
-            while(!buffSocket.readLine().equals(""));
-            return GestionHttpClient.writeFile(bis,file.getName(), 1212);
+            int length=0;
+            boolean headerskipped = false;
+            while (!headerskipped) {
+                line = buffSocket.readLine();
+                System.out.println("'" + line + "'");
+                if (line.equals("")) {
+                    headerskipped = true;
+                    break;
+                }
+                String[] field = line.split(" ");
+                if (field[0].equals("Content-Length:")) {
+                    length = Integer.parseInt(field[1]);
+                }
+            }
+            System.out.println(length);
+            if (length == 0) return 411;
+            return GestionHttpClient.writeFile(bis,file.getName(), length);
         } catch (UnknownHostException e) {
             e.printStackTrace();
             return unknown_server;
@@ -62,7 +79,7 @@ public class LocalClient {
         try {
             verifSocket(server_address_str, server_port_str);
 
-            String header = "HTTP/1.1\r\nConnection: close\r\n\r\n";
+            String header = "END " + "nothing" + " HTTP/1.1\r\nConnection: close\r\n\r\n";
             PrintWriter outSocket = new PrintWriter(socket.getOutputStream());
             outSocket.print(header);
             outSocket.flush();
@@ -81,7 +98,7 @@ public class LocalClient {
         try {
             File file = new File(filepath);
             verifSocket(server_address_str, server_port_str);
-            int res = GestionHttpClient.sendFile(bos, filepath, file.getName());
+            int res = GestionHttpClient.sendFile(bos, file);
             if (res != 0) return res;
 
             BufferedReader buffSocket = new BufferedReader(new InputStreamReader(socket.getInputStream()));
